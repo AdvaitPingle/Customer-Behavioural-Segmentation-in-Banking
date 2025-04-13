@@ -1,10 +1,11 @@
 Select * From bank_transactions
 
+-- Step 1 -
 SELECT TOP 10 * 
 FROM bank_transactions;
 
--- Next Step: Checking for Missing Data
--- Now that we’ve validated the structure, let’s identify if there are any null or invalid values in the critical columns like , , , and . Run the following query:
+-- Step 2: Checking for Missing Data
+-- Identify if there are any null or invalid values in the critical columns like , , , and . Run the following query:
 SELECT 
     COUNT(*) AS TotalRows,
     SUM(CASE WHEN TransactionAmount_INR IS NULL THEN 1 ELSE 0 END) AS NullTransactionAmount,
@@ -14,19 +15,18 @@ SELECT
     SUM(CASE WHEN CustGender IS NULL THEN 1 ELSE 0 END) AS NullCustGender
 FROM bank_transactions;
 
--- Excluding Records with Missing Values:
--- For critical columns like  and , you can exclude rows with missing values in your queries if they’re few compared to the dataset size.
+-- Step 3- Excluding Records with Missing Values
+-- For critical columns like  and ,exclude rows with missing values in your queries if theyâ€™re few compared to the dataset size.
 
 SELECT * 
 FROM bank_transactions
 WHERE CustAccountBalance IS NOT NULL 
   AND CustomerDOB IS NOT NULL;
 
-
-  -- Basic Data Exploration
-  -- Now that the structure is validated, let’s start with queries that derive basic customer demographics. First, segment customers by their age groups.
+-- Step 4 -
+-- Basic Data Exploration
+-- Start with queries that derive basic customer demographics. First, segment customers by their age groups.
 -- Query: Derive Age and Age Segments
--- Here’s the query to calculate age from  and classify customers into meaningful age groups:
 
 SELECT 
     CustomerID,
@@ -39,10 +39,10 @@ SELECT
     END AS AgeGroup
 FROM bank_transactions;
 
+-- Step 5 - 
 -- Analyzing Financial Behavior Based on Age Groups
--- Now that we have segmented customers by age, the next step is to explore their financial behavior, specifically account balances and transaction amounts, for each age group.
+-- Explore their financial behavior, specifically account balances and transaction amounts, for each age group.
 -- Query: Average Account Balance and Total Transactions by Age Group
--- This query will calculate the average account balance and total transaction amounts for each age group:
 
 SELECT 
     CASE 
@@ -64,9 +64,8 @@ GROUP BY
     END;
 
 
-
--- Next Query Let’s now explore location-based trends to understand regional financial behavior:
--- Query:
+-- Step 6 - 
+-- Explore location-based trends to understand regional financial behavior:
 
 SELECT 
     CustLocation,
@@ -77,7 +76,8 @@ FROM bank_transactions
 GROUP BY CustLocation
 ORDER BY TotalSpending DESC;
 
--- Let’s move to analyze gender-based trends to understand if there are any behavioral differences in transactions and account balances based on CustGender.
+-- Step 7 - 
+-- Analyze gender-based trends to understand if there are any behavioral differences in transactions and account balances based on CustGender.
 
 SELECT 
     CustGender,
@@ -87,7 +87,8 @@ SELECT
 FROM bank_transactions
 GROUP BY CustGender;
 
--- Let’s move forward by combining age and gender to analyze how different demographics behave. Here’s the next query:
+-- Step 8 - 
+-- Combining age and gender to analyze how different demographics behave. 
 
 SELECT 
     CASE 
@@ -112,7 +113,8 @@ GROUP BY
 ORDER BY AgeGroup, CustGender;
 
 
--- Now, let’s focus on transaction patterns by location and age group to uncover regional insights across demographics.
+-- Step 9 -
+-- Identify transaction patterns by location and age group to uncover regional insights across demographics.
 
 SELECT 
     CustLocation,
@@ -136,16 +138,15 @@ GROUP BY CustLocation,
 ORDER BY CustLocation, AgeGroup;
 
 
+-- Step 10 -
 -- Addressing Data Gaps
--- Cleanup for Missing Locations:
--- The  location entries (e.g., Middle Aged with 123 transactions) should be investigated for incomplete data.
+-- Cleanup for Missing Locations
 
 SELECT *
 FROM bank_transactions
 WHERE CustLocation IS NULL;
 
--- Next Steps Let’s refine the analysis to address missing locations and understand their impact. Query: Investigate Missing Locations
--- Run this query to explore more details about rows with  locations:
+-- Step 11 -  Letâ€™s refine the analysis to address missing locations and understand their impact. 
 
 SELECT 
     CustomerID, 
@@ -157,7 +158,7 @@ SELECT
 FROM bank_transactions
 WHERE CustLocation IS NULL;
 
--- Action Plan Let’s proceed with these steps:
+-- Step 12 - 
 -- Identify Proportions
 -- Calculate what percentage of rows in your dataset have  locations to determine their overall impact.
 
@@ -167,7 +168,7 @@ SELECT
     (SUM(CASE WHEN CustLocation IS NULL THEN 1 ELSE 0 END) * 100.0 / COUNT(*)) AS NullLocationPercentage
 FROM bank_transactions;
 
--- Demographic Insights for Missing Locations:
+-- Step 13 -
 -- Explore demographic patterns among customers with  locations (e.g., by gender, age group).
 
 SELECT 
@@ -191,9 +192,9 @@ GROUP BY CustGender,
              ELSE 'Senior'
          END;
 
+-- Step 14
 -- Analyze Transaction Patterns Over Time
--- Query: Peak Days for Transactions
--- Let’s identify which day of the week drives the most transactions:
+-- Peak Days for Transactions
 
 SELECT 
     DATENAME(WEEKDAY, TransactionDate) AS DayOfWeek,
@@ -203,7 +204,8 @@ FROM bank_transactions
 GROUP BY DATENAME(WEEKDAY, TransactionDate)
 ORDER BY TotalTransactions DESC;
 
--- We’ve identified daily trends, so now let’s refine the time-based analysis by investigating:
+-- Step 15 -
+-- Refine the time-based analysis by investigating:
 -- Hourly Patterns: When are transactions most frequent during the day?
 -- Monthly Trends: Which months show higher financial activity?
 
